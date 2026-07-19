@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>관리자 - 역할 신청</title>
+  <title>관리자 - 선착순 신청</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
   <!-- Firebase -->
@@ -26,17 +26,6 @@
 <div id="admin-view" class="view hidden">
   <div class="card wide">
     <h2><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 4h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1"/><path d="M5 16h4a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1"/><path d="M15 12h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1"/><path d="M15 4h4a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1"/></svg>관리자 패널</h2>
-
-<!-- 학생 관리 -->
-    <div class="panel">
-      <h3><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0 -3 -3.85"/></svg>학생 관리</h3>
-
-      <label class="field-label">학생 수</label>
-      <input id="student-count-input" type="number" min="1" placeholder="예: 29"/>
-
-      <button id="btn-generate-students">학생 수 저장 및 명단 생성</button>
-      <p id="student-count-status" class="hint-text"></p>
-    </div>
 
     <!-- 항목 관리 -->
     <div class="panel">
@@ -71,7 +60,7 @@
         <summary style="cursor:pointer; font-weight:bold;">일괄 등록 (기존 항목 전체 교체)</summary>
         <div style="margin-top:10px;">
           <label class="field-label">한 줄에 "이름,정원" 형식으로 입력</label>
-          <textarea id="bulk-items-text" rows="6" placeholder="교실 쓸기,4&#10;교실 닦기,3&#10;청소 도구함 정리,2&#10;창틀 닦기,3"></textarea>
+          <textarea id="bulk-items-text" rows="6" placeholder="교실 쓸기,4&#10;교실 닦기,3"></textarea>
           <button id="btn-bulk-register" class="secondary">일괄 등록 (전체 교체 + 기존 신청 초기화)</button>
         </div>
       </details>
@@ -117,10 +106,22 @@
     <!-- 항목별 신청 현황 -->
     <div class="panel">
       <h3><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6h11"/><path d="M9 12h11"/><path d="M9 18h11"/><path d="M4 6h.01"/><path d="M4 12h.01"/><path d="M4 18h.01"/></svg>항목별 신청 현황 (번호순)</h3>
+      <button id="btn-download-results-csv" class="secondary">신청 결과 CSV(엑셀) 다운로드</button>
       <div id="items-status-list"></div>
     </div>
 
-    <!-- 학생 비밀번호 일괄 관리 -->
+    <!-- 학생 관리 (자주 안 쓰는 기능이라 접어둠) -->
+    <details class="panel">
+      <summary style="cursor:pointer; font-weight:bold; font-size:1rem;"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0 -3 -3.85"/></svg>학생 관리 (학생 수 설정 및 명단 생성)</summary>
+      <div style="margin-top:12px;">
+        <label class="field-label">학생 수</label>
+        <input id="student-count-input" type="number" min="1" placeholder="예: 29"/>
+        <button id="btn-generate-students">학생 수 저장 및 명단 생성</button>
+        <p id="student-count-status" class="hint-text"></p>
+      </div>
+    </details>
+
+    <!-- 학생 비밀번호 일괄 관리 (자주 안 쓰는 기능이라 접어둠) -->
     <details class="panel">
       <summary style="cursor:pointer; font-weight:bold; font-size:1rem;"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2"/><path d="M8 11h8v7h-8l0 -7"/><path d="M8 15h8"/><path d="M11 11v7"/></svg>학생 비밀번호 일괄 관리</summary>
       <div style="margin-top:12px;">

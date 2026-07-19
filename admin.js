@@ -310,6 +310,46 @@ document.getElementById("btn-bulk-register").addEventListener("click", async () 
 });
 
 /* =========================
+   항목별 신청 결과 CSV(엑셀) 다운로드
+   - 형식: 항목명, 정원, 신청인원, 신청자 번호 목록(번호순, 세미콜론 구분)
+========================= */
+document.getElementById("btn-download-results-csv").addEventListener("click", () => {
+    const itemIds = Object.keys(cachedItems);
+
+    if (itemIds.length === 0) {
+        alert("등록된 항목이 없습니다.");
+        return;
+    }
+
+    const header = ["항목명", "정원", "신청인원", "신청자 번호"];
+    const rows = [header.join(",")];
+
+    itemIds.forEach(itemId => {
+        const item = cachedItems[itemId];
+        const participantIds = item.participants
+            ? Object.keys(item.participants).map(id => parseInt(id, 10)).sort((a, b) => a - b)
+            : [];
+
+        // 항목명에 콤마가 들어있을 수 있으니 큰따옴표로 감싸기
+        const nameField = `"${(item.name || "").replace(/"/g, '""')}"`;
+        const idsField = `"${participantIds.join("; ")}"`;
+
+        rows.push([nameField, item.capacity, participantIds.length, idsField].join(","));
+    });
+
+    // 엑셀에서 한글이 깨지지 않도록 BOM 추가
+    const csvContent = "\uFEFF" + rows.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "신청결과.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+});
+
+/* =========================
    인증 문제 설정
 ========================= */
 function updateAuthInputsFromConfig() {
