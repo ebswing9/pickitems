@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>학급 역할 신청</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+  <!-- Firebase (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<!-- 1. 로그인 화면 -->
+<div id="login-view" class="view">
+  <div class="card">
+    <h2><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"/><path d="M21 12h-13l3 -3"/><path d="M11 15l-3 -3"/></svg>학급 역할 신청</h2>
+    <input id="student-id" type="number" placeholder="번호" min="1"/>
+    <input id="student-pw" type="password" placeholder="비밀번호"/>
+    <button id="btn-login">입장</button>
+    <p id="login-error" class="error-text"></p>
+  </div>
+</div>
+
+<!-- 2. 대기 화면 -->
+<div id="wait-view" class="view hidden">
+  <div class="card">
+    <h2><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 7v5l3 3"/></svg>대기 중</h2>
+    <p>신청 시작 전까지 기다리세요.</p>
+    <p>번호: <span id="wait-id"></span></p>
+    <button id="btn-logout-wait" class="secondary">로그아웃</button>
+  </div>
+</div>
+
+<!-- 3. 항목 선택 화면 -->
+<div id="main-view" class="view hidden">
+  <div class="card wide">
+    <h2><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11l3 3l8 -8"/><path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9"/></svg>항목 선택</h2>
+    <p id="selection-mode-hint" class="hint-text"></p>
+
+    <div id="items-container" class="items-list">
+      <!-- JS가 이곳에 항목 카드를 렌더링합니다 -->
+    </div>
+
+    <div id="multi-selection-footer" class="multi-footer hidden">
+      <p id="multi-selection-count" class="hint-text"></p>
+      <button id="btn-finish-selection">선택 완료</button>
+    </div>
+  </div>
+</div>
+
+<!-- 4. 인증 모달 -->
+<div id="modal" class="modal hidden">
+  <div class="modal-box">
+    <h3 id="modal-title">신청 확정</h3>
+    <p>아래 문제를 확인하고 정답을 입력하세요</p>
+    <p class="captcha-box" id="captcha-text">---</p>
+    <input id="captcha-input" type="text" placeholder="정답 입력"/>
+    <button id="btn-confirm">확정</button>
+    <button id="btn-cancel" class="secondary">취소</button>
+  </div>
+</div>
+
+<!-- 5. 결과 화면 (내 신청 내역만 간단히 표시) -->
+<div id="result-view" class="view hidden">
+  <div class="card">
+    <h2><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M9 12l2 2l4 -4"/></svg>신청 완료</h2>
+    <p>번호: <span id="result-id"></span></p>
+    <div id="my-selections-list"></div>
+    <button id="btn-logout-result" class="secondary">로그아웃</button>
+  </div>
+</div>
+
+<script src="firebase.js"></script>
+<script src="student.js"></script>
+</body>
+</html>

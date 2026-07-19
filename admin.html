@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>관리자 - 역할 신청</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<!-- 1. 관리자 로그인 -->
+<div id="admin-login-view" class="view">
+  <div class="card">
+    <h2><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065"/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></svg>관리자 로그인</h2>
+    <input id="admin-pw" type="password" placeholder="관리자 비밀번호"/>
+    <button id="btn-admin-login">로그인</button>
+    <p id="admin-login-error" class="error-text"></p>
+  </div>
+</div>
+
+<!-- 2. 관리자 패널 -->
+<div id="admin-view" class="view hidden">
+  <div class="card wide">
+    <h2><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 4h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1"/><path d="M5 16h4a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1"/><path d="M15 12h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1"/><path d="M15 4h4a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1"/></svg>관리자 패널</h2>
+
+<!-- 학생 관리 -->
+    <div class="panel">
+      <h3><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0 -3 -3.85"/></svg>학생 관리</h3>
+
+      <label class="field-label">학생 수</label>
+      <input id="student-count-input" type="number" min="1" placeholder="예: 29"/>
+
+      <button id="btn-generate-students">학생 수 저장 및 명단 생성</button>
+      <p id="student-count-status" class="hint-text"></p>
+    </div>
+
+    <!-- 항목 관리 -->
+    <div class="panel">
+      <h3><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11l3 3l8 -8"/><path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9"/></svg>항목 관리</h3>
+
+      <label class="field-label">선택 방식</label>
+      <select id="selection-mode-select" style="width:100%; padding:10px; margin:8px 0; border:1px solid #BEE3F8; border-radius:6px; background:#F7FBFE;">
+        <option value="single">한 개만 선택</option>
+        <option value="multi">여러 개 선택</option>
+      </select>
+
+      <div id="max-selections-row">
+        <label class="field-label">1인당 최대 선택 개수 (여러 개 선택 모드일 때)</label>
+        <input id="max-selections-input" type="number" min="1" placeholder="예: 2"/>
+      </div>
+
+      <button id="btn-save-mode">선택 방식 저장</button>
+
+      <hr style="margin:20px 0; border:none; border-top:1px solid #D9EEFB;"/>
+
+      <label class="field-label">현재 등록된 항목</label>
+      <div id="items-admin-list"></div>
+
+      <label class="field-label" style="margin-top:16px;">항목 추가 (이름, 정원)</label>
+      <div style="display:flex; gap:8px;">
+        <input id="new-item-name" type="text" placeholder="예: 교실 쓸기" style="flex:2;"/>
+        <input id="new-item-capacity" type="number" min="1" placeholder="정원" style="flex:1;"/>
+      </div>
+      <button id="btn-add-item">항목 추가</button>
+
+      <details style="margin-top:16px;">
+        <summary style="cursor:pointer; font-weight:bold;">일괄 등록 (기존 항목 전체 교체)</summary>
+        <div style="margin-top:10px;">
+          <label class="field-label">한 줄에 "이름,정원" 형식으로 입력</label>
+          <textarea id="bulk-items-text" rows="6" placeholder="교실 쓸기,4&#10;교실 닦기,3&#10;청소 도구함 정리,2&#10;창틀 닦기,3"></textarea>
+          <button id="btn-bulk-register" class="secondary">일괄 등록 (전체 교체 + 기존 신청 초기화)</button>
+        </div>
+      </details>
+
+      <p id="items-status" class="error-text"></p>
+    </div>
+
+    <!-- 인증 문제 설정 -->
+    <div class="panel">
+      <h3><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M16.555 3.843l3.602 3.602a2.877 2.877 0 0 1 0 4.069l-2.643 2.643a2.877 2.877 0 0 1 -4.069 0l-.301 -.301l-6.558 6.558a2 2 0 0 1 -1.239 .578l-.175 .008h-1.172a1 1 0 0 1 -.993 -.883l-.007 -.117v-1.172a2 2 0 0 1 .467 -1.284l.119 -.13l.414 -.414h2v-2h2v-2l2.144 -2.144l-.301 -.301a2.877 2.877 0 0 1 0 -4.069l2.643 -2.643a2.877 2.877 0 0 1 4.069 0z"/><path d="M15 9h.01"/></svg>인증 문제 설정</h3>
+
+      <label class="field-label">학생에게 보여줄 문제 / 힌트</label>
+      <textarea id="auth-question-admin" rows="2" placeholder="예: 선생님이 좋아하는 계절은? (힌트: 벚꽃 필 때)"></textarea>
+
+      <label class="field-label">정답 (학생이 입력해야 하는 값)</label>
+      <input id="auth-word-admin" type="text" placeholder="예: 봄"/>
+
+      <button id="btn-set-auth">적용</button>
+      <p id="auth-status"></p>
+
+      <div class="preview-box">
+        <p class="field-label">학생 화면 미리보기</p>
+        <p class="preview-question" id="auth-question-preview">문제가 여기에 표시됩니다</p>
+      </div>
+    </div>
+
+    <!-- 게임 제어 -->
+    <div class="panel">
+      <h3><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 10a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/><path d="M6 4v4"/><path d="M6 12v8"/><path d="M10 16a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/><path d="M12 4v10"/><path d="M12 18v2"/><path d="M16 7a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/><path d="M18 4v1"/><path d="M18 9v11"/></svg>게임 제어</h3>
+      <button id="btn-start"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 4v16l13 -8l-13 -8"/></svg>시작</button>
+      <button id="btn-end"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 5m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z"/></svg>종료</button>
+      <button id="btn-reset" class="secondary"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></svg>초기화</button>
+      <p id="game-status-text" class="hint-text"></p>
+    </div>
+
+    <!-- 접속 현황 -->
+    <div class="panel">
+      <h3><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0 -3 -3.85"/></svg>접속 현황</h3>
+      <p id="connect-count">0 / 0</p>
+      <div id="student-list"></div>
+    </div>
+
+    <!-- 항목별 신청 현황 -->
+    <div class="panel">
+      <h3><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6h11"/><path d="M9 12h11"/><path d="M9 18h11"/><path d="M4 6h.01"/><path d="M4 12h.01"/><path d="M4 18h.01"/></svg>항목별 신청 현황 (번호순)</h3>
+      <div id="items-status-list"></div>
+    </div>
+
+    <!-- 학생 비밀번호 일괄 관리 -->
+    <details class="panel">
+      <summary style="cursor:pointer; font-weight:bold; font-size:1rem;"><svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2"/><path d="M8 11h8v7h-8l0 -7"/><path d="M8 15h8"/><path d="M11 11v7"/></svg>학생 비밀번호 일괄 관리</summary>
+      <div style="margin-top:12px;">
+        <button id="btn-download-csv" class="secondary">현재 비밀번호 CSV 다운로드</button>
+        <input id="csv-upload" type="file" accept=".csv"/>
+        <button id="btn-apply-csv">CSV 적용</button>
+        <p id="csv-status" class="error-text"></p>
+        <p style="font-size:12px; color:#666; text-align:left; margin-top:4px;">
+          형식: 한 줄에 "번호,비밀번호" (예: 1,1234). 다운로드한 파일을 엑셀/메모장으로 수정 후 다시 업로드하세요.<br/>
+          번호는 현재 설정된 학생 수 범위 내여야 합니다.
+        </p>
+      </div>
+    </details>
+<button id="btn-admin-logout" class="secondary">로그아웃</button>
+  </div>
+</div>
+
+<script src="firebase.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
