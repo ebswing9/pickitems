@@ -340,6 +340,19 @@ document.getElementById("btn-confirm").addEventListener("click", async () => {
    선택 완료 (multi 모드 전용)
 ========================= */
 document.getElementById("btn-finish-selection").addEventListener("click", async () => {
+    // single 모드에서는 이 버튼이 애초에 작동하면 안 됨 (화면에는 숨겨져 있지만 안전장치로 한 번 더 검사)
+    if (!currentConfig || currentConfig.selectionMode !== "multi") {
+        return;
+    }
+
+    const mySelections = (myData && myData.selections) || {};
+    const selectedCount = Object.keys(mySelections).length;
+
+    if (selectedCount === 0) {
+        alert("최소 1개 이상의 항목을 선택해주세요.");
+        return;
+    }
+
     await db.ref(`${PATH.STUDENTS}/${myId}`).update({ status: STUDENT_STATE.DONE });
 });
 
